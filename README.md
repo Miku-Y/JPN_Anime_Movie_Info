@@ -1,2 +1,2 @@
 # JPN_Anime_Movie_Info
-使用Python爬虫获取日本动画电影时光网评分TOP100信息并保存为Json
+使用Python爬虫获取时光网日本动画电影TOP100信息并保存为Json
