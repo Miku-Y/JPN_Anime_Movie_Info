@@ -76,14 +76,18 @@ def get_movie_info(id):
         section = str(info_names[2]).split('target="_blank">')[-1]  # 发行地区
         company = str(info_names[3]).split('target="_blank">')[-1]  # 发行公司
         movie_info = soup.select('div[class="db_cover __r_c_"]')
-        movie_name = re.findall(r'title="(.*?)">', str(movie_info), re.S)  # 提取电影名称
+        movie_names = re.findall(r'title="(.*?)">', str(movie_info), re.S)  # 提取电影名称片段
+        movie_name = re.findall(r'\[\'(.*?)\(', str(movie_names), re.S)  # 提取电影名称
         movie_title = movie_name[0]
+        movie_times = re.findall(r'(\d+)', str(movie_names), re.S)  # 提取电影发行时间
+        movie_time = movie_times[0]
         info = {
             '电影名': movie_title,
             '导演': director,
             '编剧': playwriter,
             '国家地区': section,
-            '发行公司': company
+            '发行公司': company,
+            '发行时间': movie_time
         }
         data.append(info)
     except IndexError:
