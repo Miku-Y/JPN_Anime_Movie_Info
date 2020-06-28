@@ -58,7 +58,6 @@ def get_ids():
             ids.append(item)
     print('Top100动漫的id已获取:')
     print(ids)
-    # 将获取到的100个电影id列表返回
     return ids
 
 
