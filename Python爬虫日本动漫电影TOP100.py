@@ -36,16 +36,10 @@ def get_ids():
     # 向网站发起请求，并获取响应对象
     response_one = requests.get('http://movie.mtime.com/list/1709.html',
                                 headers=headers(), verify=False)
-    # text属性获取响应内容（字符串）网站源码
     html_one = response_one.text
-    # BeautifulSoup是用来从HTML或XML中提取数据的Python库。
     soup_one = BeautifulSoup(html_one, 'lxml')  # 选择lxml作为解析器
-    # 筛选出html里面类名为“top_nlist”的div标签元素内容，返回list
     id_info = soup_one.select('div[class="top_nlist"]')  # # 这个属性所在的div标签内是电影排行信息
-    # 设置匹配格式，()表示匹配后只保留括号的内容，\d+ 表示多个任意数字
     patt = r'<a href="http://movie.mtime.com/(\d+)/'
-    # 正则表达式re.findall()方法能够以列表的形式返回能匹配的字符串
-    # patt“需要匹配的字符串格式”  str(id_info)“在这个字符串中查找”  re.S“匹配包括换行在内的所有字符”
     id_one = re.findall(patt, str(id_info), re.S)
     # 将第一页排行榜的电影id存入ids列表
     for item in id_one:
@@ -74,22 +68,17 @@ def get_movie_info(id):
     response = requests.get('http://movie.mtime.com/{}/'.format(id), headers=headers())
     html = response.text
     soup = BeautifulSoup(html, 'lxml')
-    # 筛选出html里面有属性为pan="M14_Movie_Overview_BaseInfo"的dd标签元素内容，返回list
     info_name = soup.select('dd[pan="M14_Movie_Overview_BaseInfo"]')  # 这个属性所在的dd标签内是电影信息
-    # 在info_name中查找，(.*?)遇到开始和结束就进行截取，只保留括号的内容
     info_names = re.findall(r'</strong>(.*?)</a>', str(info_name), re.S)
     data = []
     try:
-        # 选择info_names列表的每条信息，用split()以指定字符进行切片，并选择最后一个切片，即需要的电影信息
         director = str(info_names[0]).split('target="_blank">')[-1]  # 导演
         playwriter = str(info_names[1]).split('target="_blank">')[-1]  # 编剧
         section = str(info_names[2]).split('target="_blank">')[-1]  # 发行地区
         company = str(info_names[3]).split('target="_blank">')[-1]  # 发行公司
         movie_info = soup.select('div[class="db_cover __r_c_"]')
         movie_name = re.findall(r'title="(.*?)">', str(movie_info), re.S)  # 提取电影名称
-        # 将列表内的内容赋值给movie_title(相当于去除列表符号)
         movie_title = movie_name[0]
-        # 将上面获取到的电影信息放入字典
         info = {
             '电影名': movie_title,
             '导演': director,
@@ -116,7 +105,5 @@ if __name__ == '__main__':
     print('正在获取动漫详细信息...')
     # 在for循环体中用tqdm()包裹迭代器实现进度条效果
     for i in tqdm(ids):
-        # 将获取到的每一条数据列表合并
         list_all.extend(get_movie_info(i))
-    # 将数据列表转为Json格式存储
     write2json(list_all)
